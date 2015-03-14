@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="keywords" content="Abductive reasoning,1900,Analogy,Artificial intelligence,Automated planning,Belief revision,Charles Peirce,Charles Peirce (Bibliography),Computing,Deductive reasoning,Defeasible reasoning" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="search" type="application/opensearchdescription+xml" href="/w/opensearch_desc.php" title="Wikipedia (English)" />
+<link rel="copyright" href="../../../COPYING.html" />
+    <title>Abductive reasoning - Wikipedia, the free encyclopedia</title>
+    <style type="text/css">/*<![CDATA[*/ @import "../../../skins/htmldump/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="../../../skins/common/commonPrint.css" />
+    <!--[if lt IE 5.5000]><style type="text/css">@import "../../../skins/monobook/IE50Fixes.css";</style><![endif]-->
+    <!--[if IE 5.5000]><style type="text/css">@import "../../../skins/monobook/IE55Fixes.css";</style><![endif]-->
+    <!--[if IE 6]><style type="text/css">@import "../../../skins/monobook/IE60Fixes.css";</style><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="../../../skins/common/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script type="text/javascript" src="../../../skins/common/wikibits.js"></script>
+    <script type="text/javascript" src="../../../skins/htmldump/md5.js"></script>
+    <script type="text/javascript" src="../../../skins/htmldump/utf8.js"></script>
+    <script type="text/javascript" src="../../../skins/htmldump/lookup.js"></script>
+    <script type="text/javascript" src="../../../raw/gen.js"></script>        <style type="text/css">/*<![CDATA[*/
+@import "../../../raw/MediaWiki%7ECommon.css";
+@import "../../../raw/MediaWiki%7EMonobook.css";
+@import "../../../raw/gen.css";
+/*]]>*/</style>          </head>
+  <body
+    class="ns-0">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	        <h1 class="firstHeading">Abductive reasoning</h1>
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From Wikipedia, the free encyclopedia</h3>
+	    <div id="contentSub"></div>
+	    	    	    <!-- start content -->
+	    <p><b>Abduction</b>, or <b>abductive reasoning</b>, is the process of reasoning to the best <a href="../../../e/x/p/Explanation.html" title="Explanation">explanations</a>. In other words, it is the reasoning process that starts from a set of <a href="../../../f/a/c/Fact.html" title="Fact">facts</a> and derives their most likely explanations. The term <i>abduction</i> is sometimes used to mean just the generation of <a href="../../../h/y/p/Hypothesis.html" title="Hypothesis">hypotheses</a> to explain observations or conclusions, but the former definition is more common both in <a href="../../../p/h/i/Philosophy.html" title="Philosophy">philosophy</a> and <a href="../../../c/o/m/Computing.html" title="Computing">computing</a>.</p>
+<p><a href="../../../d/e/d/Deductive_reasoning.html" title="Deductive reasoning">Deduction</a> and abduction differ in the direction in which a rule like “<span class="texhtml"><i>a</i></span> <a href="../../../e/n/t/Entailment.html" title="Entailment">entails</a> <span class="texhtml"><i>b</i></span>” is used for inference (see also <a href="../../../l/o/g/Logical_reasoning.html" title="Logical reasoning">logical reasoning</a> for a comparison with induction):</p>
+<dl>
+<dt>Deduction&#160;</dt>
+<dd>allows deriving <span class="texhtml"><i>b</i></span> as a consequence of <span class="texhtml"><i>a</i></span>; in other words, deduction is the process of deriving the consequences of what is known;</dd>
+</dl>
+<dl>
+<dt>Abduction&#160;</dt>
+<dd>allows deriving <span class="texhtml"><i>a</i></span> as an explanation of <span class="texhtml"><i>b</i></span>; abduction works in reverse to deduction, by allowing the precondition <span class="texhtml"><i>a</i></span> of “<span class="texhtml"><i>a</i></span> entails <span class="texhtml"><i>b</i></span>” to be derived from the consequence <span class="texhtml"><i>b</i></span>; in other words, abduction is the process of explaining what is known.</dd>
+</dl>
+<p>On rare occasions, the expression "explanatory conclusions" is used instead of "explanations" to name the result of the abductive process.</p>
+<p>Applications in <a href="../../../a/r/t/Artificial_intelligence.html" title="Artificial intelligence">artificial intelligence</a> include <a href="../../../f/a/u/Fault_diagnosis.html" title="Fault diagnosis">fault diagnosis</a>, <a href="../../../b/e/l/Belief_revision.html" title="Belief revision">belief revision</a>, and <a href="../../../a/u/t/Automated_planning.html" title="Automated planning">automated planning</a>.</p>
+<table id="toc" class="toc" summary="Contents">
+<tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+</div>
+<ul>
+<li class="toclevel-1"><a href="#Logic-based_abduction"><span class="tocnumber">1</span> <span class="toctext">Logic-based abduction</span></a></li>
+<li class="toclevel-1"><a href="#Set-cover_abduction"><span class="tocnumber">2</span> <span class="toctext">Set-cover abduction</span></a></li>
+<li class="toclevel-1"><a href="#History_of_the_concept"><span class="tocnumber">3</span> <span class="toctext">History of the concept</span></a></li>
+<li class="toclevel-1"><a href="#Applications"><span class="tocnumber">4</span> <span class="toctext">Applications</span></a></li>
+<li class="toclevel-1"><a href="#References"><span class="tocnumber">5</span> <span class="toctext">References</span></a></li>
+<li class="toclevel-1"><a href="#See_also"><span class="tocnumber">6</span> <span class="toctext">See also</span></a></li>
+<li class="toclevel-1"><a href="#External_links"><span class="tocnumber">7</span> <span class="toctext">External links</span></a></li>
+</ul>
+</td>
+</tr>
+</table>
+<p><script type="text/javascript">
+//<![CDATA[
+ if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script><a name="Logic-based_abduction" id="Logic-based_abduction"></a></p>
+<h2><span class="editsection">[<a href="../../../a/b/d/Abductive_reasoning.html" title="Edit section: Logic-based abduction">edit</a>]</span> <span class="mw-headline">Logic-based abduction</span></h2>
+<p>In <a href="../../../l/o/g/Logic.html" title="Logic">logic</a>, abduction is done from a logical theory <span class="texhtml"><i>T</i></span> representing a <a href="../../../d/o/m/Domain_%28mathematics%29.html" title="Domain (mathematics)">domain</a> and a set of observations <span class="texhtml"><i>O</i></span>. Abduction is the process of deriving a set of explanations of <span class="texhtml"><i>O</i></span> according to <span class="texhtml"><i>T</i></span>. For <span class="texhtml"><i>E</i></span> to be an explanation of <span class="texhtml"><i>O</i></span> according to <span class="texhtml"><i>T</i></span>, it should satisfy two conditions:</p>
+<ul>
+<li><span class="texhtml"><i>O</i></span> follows from <span class="texhtml"><i>E</i></span> and <span class="texhtml"><i>T</i></span>;</li>
+</ul>
+<ul>
+<li><span class="texhtml"><i>E</i></span> is consistent with <span class="texhtml"><i>T</i></span>.</li>
+</ul>
+<p>In formal logic, <span class="texhtml"><i>O</i></span> and <span class="texhtml"><i>E</i></span> are assumed to be sets of literals. The two conditions for <span class="texhtml"><i>E</i></span> being an explanation of <span class="texhtml"><i>O</i></span> according to theory <span class="texhtml"><i>T</i></span> are formalized as:</p>
+<dl>
+<dd><img class='tex' src="../../../math/0/6/5/0654c0d2fa1e11469b9d3c5f33172a28.png" alt="T \cup E \models O" />;</dd>
+<dd><img class='tex' src="../../../math/b/1/f/b1f247d7177f94ba021a919c4cdf1be2.png" alt="T \cup E" /> is consistent.</dd>
+</dl>
+<p>Among the possible explanations <span class="texhtml"><i>E</i></span> satisfying these two conditions, some other condition of minimality is usually imposed to avoid irrelevant facts (not contributing to the entailment of <span class="texhtml"><i>O</i></span>) to be included in the explanations.</p>
+<p><a name="Set-cover_abduction" id="Set-cover_abduction"></a></p>
+<h2><span class="editsection">[<a href="../../../a/b/d/Abductive_reasoning.html" title="Edit section: Set-cover abduction">edit</a>]</span> <span class="mw-headline">Set-cover abduction</span></h2>
+<p>A different formalization of abduction is based on inverting the function that calculates the visible effects of the hypotheses. Formally, we are given a set of hypotheses <span class="texhtml"><i>H</i></span> and a set of manifestations <span class="texhtml"><i>M</i></span>; they are related by the domain knowledge, represented by a function <span class="texhtml"><i>e</i></span> that takes as an argument a set of hypotheses and gives as a result the corresponding set of manifestations. In other words, for every subset of the hypotheses <img class='tex' src="../../../math/a/f/5/af5cd4104097ae4e980f0a78038d7fe2.png" alt="H' \subseteq H" />, their effects are known to be <span class="texhtml"><i>e</i>(<i>H</i>')</span>.</p>
+<p>Abduction is performed by finding a set <img class='tex' src="../../../math/a/f/5/af5cd4104097ae4e980f0a78038d7fe2.png" alt="H' \subseteq H" /> such that <img class='tex' src="../../../math/3/b/9/3b925cfca3498bc80625f57068ca5db1.png" alt="M \subseteq e(H')" />. In other words, abduction is performed by finding a set of hypotheses <span class="texhtml"><i>H</i>'</span> such that their effects <span class="texhtml"><i>e</i>(<i>H</i>')</span> include all observations <span class="texhtml"><i>M</i></span>.</p>
+<p>A common assumption is that the effects of the hypotheses are independent, that is, for every <img class='tex' src="../../../math/a/f/5/af5cd4104097ae4e980f0a78038d7fe2.png" alt="H' \subseteq H" />, it holds that <img class='tex' src="../../../math/7/b/2/7b20301b41ac892a31a24239e7dafc8c.png" alt="e(H') = \bigcup_{h \in H'} e(\{h\})" />. If this condition is met, abduction can be seen as a form of <a href="../../../s/e/t/Set_covering.html" title="Set covering">set covering</a>.</p>
+<p><a name="History_of_the_concept" id="History_of_the_concept"></a></p>
+<h2><span class="editsection">[<a href="../../../a/b/d/Abductive_reasoning.html" title="Edit section: History of the concept">edit</a>]</span> <span class="mw-headline">History of the concept</span></h2>
+<p>Historically, Aristotle's use of the term (apagoge) has referred to a <a href="../../../s/y/l/Syllogism.html" title="Syllogism">syllogism</a> in which the major premise is known to be true, but the minor premise is only probable.</p>
+<p>The philosopher <a href="../../../c/h/a/Charles_Peirce_071b.html" title="Charles Peirce">Charles Peirce</a> introduced abduction into modern logic. In his works before <a href="../../../1/9/0/1900.html" title="1900">1900</a>, he mostly uses the term to mean the use of a known rule to explain an observation, e.g., “if it rains the grass is wet” is a known rule used to explain that the grass is wet.</p>
+<p>He later used the term to mean creating new rules to explain new observations, emphasizing that abduction is the only logical process that actually creates anything <i>new</i>. Namely, he described the process of science as a combination of abduction, deduction and implication, stressing that new knowledge is only created by abduction.</p>
+<p>This is contrary to the common use of <i>abduction</i> in the <a href="../../../s/o/c/Social_science.html" title="Social science">social sciences</a> and in <a href="../../../a/r/t/Artificial_intelligence.html" title="Artificial intelligence">artificial intelligence</a>, where the old meaning is used. Contrary to this use, Peirce stated that the actual process of generating a new rule is not “hampered” by logic rules. Rather, he pointed out that humans have an innate ability to infer correctly; possessing this ability is explained by the <a href="../../../e/v/o/Evolution.html" title="Evolution">evolutionary</a> advantage it gives. Peirce's second use of 'abduction' is most similar to <a href="../../../i/n/d/Induction_%28philosophy%29.html" title="Induction (philosophy)">induction</a>.</p>
+<p><a name="Applications" id="Applications"></a></p>
+<h2><span class="editsection">[<a href="../../../a/b/d/Abductive_reasoning.html" title="Edit section: Applications">edit</a>]</span> <span class="mw-headline">Applications</span></h2>
+<p>Abduction has been applied in <a href="../../../a/r/t/Artificial_intelligence.html" title="Artificial intelligence">artificial intelligence</a> for various tasks. The most direct application of abduction is that of automatically detecting faults in systems: given a theory relating faults with their effects and a set of observed effects, abduction can be used to derive sets of faults that are likely to be the cause of the problem.</p>
+<p>Abduction can also be used to model <a href="../../../a/u/t/Automated_planning.html" title="Automated planning">automated planning</a>. Given a logical theory relating action occurrences with their effects (for example, a formula of the <a href="../../../e/v/e/Event_calculus.html" title="Event calculus">event calculus</a>), the problem of finding a plan for reaching a state can be modeled as the problem of abducting a sequence of literals implying that the final state is the goal state.</p>
+<p><a href="../../../b/e/l/Belief_revision.html" title="Belief revision">Belief revision</a>, the process of adapting beliefs in view of new information, is another field in which abduction has been applied. The main problem of belief revision is that the new information may be inconsistent with the corpus of beliefs, while the result of the incorporation cannot be inconsistent. This process can be done by the use of abduction: once an explanation for the observation has been found, integrating it does not generate inconsistency. This use of abduction is not straightforward, as adding propositional formulae to other propositional formulae can only make inconsistencies worst. Instead, abduction is done at the level of the ordering of preference of the possible worlds.</p>
+<p><a name="References" id="References"></a></p>
+<h2><span class="editsection">[<a href="../../../a/b/d/Abductive_reasoning.html" title="Edit section: References">edit</a>]</span> <span class="mw-headline">References</span></h2>
+<ul>
+<li>Awbrey, Jon, and Awbrey, Susan (1995), "Interpretation as Action: The Risk of Inquiry", <i>Inquiry: Critical Thinking Across the Disciplines</i>, 15, 40-52. <a href="http://www.chss.montclair.edu/inquiry/fall95/awbrey.html" class="external text" title="http://www.chss.montclair.edu/inquiry/fall95/awbrey.html">Eprint</a></li>
+</ul>
+<ul>
+<li>Edwards, Paul (1967, eds.), "The Encyclopedia of Philosophy," Macmillan Publishing Co, Inc. &amp; The Free Press, New York. Collier Macmillan Publishers, London.</li>
+</ul>
+<ul>
+<li>Eiter, T., and Gottlob, G. (1995), "The Complexity of Logic-Based Abduction, <i>Journal of the ACM</i>, 42.1, 3-42.</li>
+</ul>
+<ul>
+<li>Josephson, John R., and Josephson, Susan G. (1995, eds.), <i>Abductive Inference: Computation, Philosophy, Technology</i>, Cambridge University Press, Cambridge, UK.</li>
+</ul>
+<ul>
+<li>Menzies, T. (1996), "Applications of Abduction: Knowledge-Level Modelling, <i>International Journal of Human-Computer Studies</i>, 45.3, 305-335.</li>
+</ul>
+<ul>
+<li>Yu, Chong Ho (1994), "Is There a Logic of Exploratory Data Analysis?", <i>Annual Meeting of American Educational Research Association</i>, New Orleans, LA, April, 1994. <a href="http://seamonkey.ed.asu.edu/~alex/pub/Peirce/Logic_of_EDA.html" class="external text" title="http://seamonkey.ed.asu.edu/~alex/pub/Peirce/Logic_of_EDA.html">Eprint</a></li>
+</ul>
+<p><a name="See_also" id="See_also"></a></p>
+<h2><span class="editsection">[<a href="../../../a/b/d/Abductive_reasoning.html" title="Edit section: See also">edit</a>]</span> <span class="mw-headline">See also</span></h2>
+<table cellspacing="0" cellpadding="0" class="" style="background-color: transparent; width: 100%">
+<tr>
+<td width="" align="left" valign="top" style="padding-left:;">
+<ul>
+<li><a href="../../../a/n/a/Analogy.html" title="Analogy">Analogy</a></li>
+<li><a href="../../../c/h/a/Charles_Peirce_071b.html" title="Charles Peirce">Charles Peirce</a></li>
+<li><a href="../../../c/h/a/Charles_Peirce_%28Bibliography%29_0f33.html" title="Charles Peirce (Bibliography)">Charles Peirce (Bibliography)</a></li>
+<li><a href="../../../d/e/d/Deductive_reasoning.html" title="Deductive reasoning">Deductive reasoning</a></li>
+<li><a href="../../../d/e/f/Defeasible_reasoning.html" title="Defeasible reasoning">Defeasible reasoning</a></li>
+<li><a href="../../../i/n/d/Inductive_reasoning.html" title="Inductive reasoning">Inductive reasoning</a></li>
+</ul>
+</td>
+<td width="" align="left" valign="top" style="padding-left:;">
+<ul>
+<li><a href="../../../i/n/q/Inquiry.html" title="Inquiry">Inquiry</a></li>
+<li><a href="../../../t/h/i/Portal%7EThinking_b930.html#Topics_related_to_Thinking" title="Portal:Thinking">List of thinking-related topics</a></li>
+<li><a href="../../../l/o/g/Logic.html" title="Logic">Logic</a></li>
+<li><a href="../../../l/o/g/Logical_reasoning.html" title="Logical reasoning">Logical reasoning</a></li>
+<li><a href="../../../i/n/f/Inference_procedure.html" title="Inference procedure">Inference procedure</a></li>
+<li><a href="../../../s/i/g/Sign_relation.html" title="Sign relation">Sign relation</a></li>
+</ul>
+</td>
+</tr>
+</table>
+<p><a name="External_links" id="External_links"></a></p>
+<h2><span class="editsection">[<a href="../../../a/b/d/Abductive_reasoning.html" title="Edit section: External links">edit</a>]</span> <span class="mw-headline">External links</span></h2>
+<ul>
+<li>Josephson, John, "Abductive Inference in Reasoning and Perception", <a href="http://www.cse.ohio-state.edu/lair/Projects/Abduction/abduction.html" class="external text" title="http://www.cse.ohio-state.edu/lair/Projects/Abduction/abduction.html">Webpage</a></li>
+<li><a href="http://carbon.cudenver.edu/~mryder/martin.html" class="external text" title="http://carbon.cudenver.edu/~mryder/martin.html">Ryder, Martin</a>, <i>Instructional Technology Connections: Abduction</i>, <a href="http://carbon.cudenver.edu/~mryder/itc/abduction.html" class="external text" title="http://carbon.cudenver.edu/~mryder/itc/abduction.html">Webpage</a></li>
+</ul>
+<p><span class="boilerplate" id="foldoc"><i>This article was originally based on material from the <a href="../../../f/r/e/Free_On-line_Dictionary_of_Computing_81c7.html" title="Free On-line Dictionary of Computing">Free On-line Dictionary of Computing</a>, which is <a href="../../../f/o/l/Wikipedia%7EFoldoc_license_9ee2.html" title="Wikipedia:Foldoc license">licensed</a> under the <a href="../../../g/n/u/GNU_Free_Documentation_License_9d01.html" title="GNU Free Documentation License">GFDL</a>.</i></span></p>
+
+<!-- 
+Pre-expand include size: 1032 bytes
+Post-expand include size: 558 bytes
+Template argument size: 29 bytes
+Maximum: 2048000 bytes
+-->
+<div class="printfooter">
+Retrieved from "<a href="http://en.wikipedia.org../../../a/b/d/Abductive_reasoning.html">http://en.wikipedia.org../../../a/b/d/Abductive_reasoning.html</a>"</div>
+	    <div id="catlinks"><p class='catlinks'><a href="../../../c/a/t/Special%7ECategories_101d.html" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="../../../f/o/l/Category%7EFOLDOC_sourced_articles_b3fe.html" title="Category:FOLDOC sourced articles">FOLDOC sourced articles</a></span> | <span dir='ltr'><a href="../../../l/o/g/Category%7ELogic_19a9.html" title="Category:Logic">Logic</a></span></p></div>	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-main"
+	       class="selected"	       ><a href="../../../a/b/d/Abductive_reasoning.html">Article</a></li><li id="ca-talk"
+	       	       ><a href="../../../a/b/d/Talk%7EAbductive_reasoning_1dcd.html">Discussion</a></li><li id="ca-current"
+	       	       ><a href="http://en.wikipedia.org/wiki/Abductive_reasoning">Current revision</a></li>	  </ul>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a style="background-image: url(../../../images/wiki-en.png);"
+	    href="../../../index.html"
+	    title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+	  <h5>Navigation</h5>
+	  <div class='pBody'>
+	    <ul>
+	    	      <li id="n-mainpage"><a href="../../../index.html">Main Page</a></li>
+	     	      <li id="n-portal"><a href="../../../c/o/m/Wikipedia%7ECommunity_Portal_6a3c.html">Community Portal</a></li>
+	     	      <li id="n-Featured-articles"><a href="../../../f/e/a/Wikipedia%7EFeatured_articles_569d.html">Featured articles</a></li>
+	     	      <li id="n-currentevents"><a href="../../../c/u/r/Portal%7ECurrent_events_bb60.html">Current events</a></li>
+	     	      <li id="n-help"><a href="../../../c/o/n/Help%7EContents_22de.html">Help</a></li>
+	     	      <li id="n-contact"><a href="../../../c/o/n/Wikipedia%7EContact_us_afd6.html">Contact Wikipedia</a></li>
+	     	      <li id="n-sitesupport"><a href="http://wikimediafoundation.org/wiki/Fundraising">Donations</a></li>
+	     	    </ul>
+	  </div>
+	</div>
+		<div id="p-search" class="portlet">
+	  <h5><label for="searchInput">Search</label></h5>
+	  <div id="searchBody" class="pBody">
+	    <form action="javascript:goToStatic(3)" id="searchform"><div>
+	      <input id="searchInput" name="search" type="text"
+	        accesskey="f" value="" />
+	      <input type='submit' name="go" class="searchButton" id="searchGoButton"
+	        value="Go" />
+	    </div></form>
+	  </div>
+	</div>
+	<div id="p-lang" class="portlet">
+	  <h5>In other languages</h5>
+	  <div class="pBody">
+	    <ul>
+	      	      <li>
+	      <a href="../../../../de/a/b/d/Abduktion_%28Wissenschaftstheorie%29_2c1d.html">Deutsch</a>
+	      </li>
+	      	      <li>
+	      <a href="../../../../es/r/a/z/Razonamiento_abductivo.html">Español</a>
+	      </li>
+	      	      <li>
+	      <a href="../../../../fr/a/b/d/Abduction_%28%C3%A9pist%C3%A9mologie%29.html">Français</a>
+	      </li>
+	      	      <li>
+	      <a href="../../../../it/a/b/d/Abduzione.html">Italiano</a>
+	      </li>
+	      	      <li>
+	      <a href="../../../../pl/r/o/z/Rozumowanie_abdukcyjne.html">Polski</a>
+	      </li>
+	      	      <li>
+	      <a href="../../../../zh/%E6%BA%AF/%E5%9B%A0/%E6%8E%A8/%E6%BA%AF%E5%9B%A0%E6%8E%A8%E7%90%86.html">中文</a>
+	      </li>
+	      	    </ul>
+	  </div>
+	</div>
+	      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+    <div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="../../../skins/common/images/poweredby_mediawiki_88x31.png" alt="MediaWiki" /></a></div>	<div id="f-copyrightico"><a href="http://wikimediafoundation.org/"><img src="../../../images/wikimedia-button.png" border="0" alt="Wikimedia Foundation"/></a></div>	<ul id="f-list">
+	  	  	  <li id="f-credits">This page was last modified 15:57, 2 November 2006 by Wikipedia user Platonic Realm. Based on work by Wikipedia user(s) <a href="../../../k/n/i/User%7EKnightRider_ec3b.html" title="User:KnightRider">KnightRider</a>, <a href="../../../m/a/t/User%7EMatthewJS_31ca.html" title="User:MatthewJS">MatthewJS</a>, <a href="../../../g/o/r/User%7EGorbag42_217f.html" title="User:Gorbag42">Gorbag42</a>, <a href="../../../y/u/r/User%7EYurikBot_b393.html" title="User:YurikBot">YurikBot</a>, <a href="../../../v/e/l/User%7EVelho_c63f.html" title="User:Velho">Velho</a>, <a href="../../../d/r/a/User%7EDraicone_e5d6.html" title="User:Draicone">Draicone</a>, Good Vibrations, <a href="../../../t/r/a/User%7ETranshumanist_3b06.html" title="User:Transhumanist">Transhumanist</a>, <a href="../../../b/e/t/User%7EBetacommand_e660.html" title="User:Betacommand">Betacommand</a>, <a href="../../../j/o/n/User%7EJon_Awbrey_aa98.html" title="User:Jon Awbrey">Jon Awbrey</a>, <a href="../../../r/o/b/User%7ERobin_klein_03ef.html" title="User:Robin klein">Robin klein</a>, <a href="../../../a/n/d/User%7EAndrea.gf_76f6.html" title="User:Andrea.gf">Andrea.gf</a>, <a href="../../../f/i/l/User%7EFilemon_066c.html" title="User:Filemon">Filemon</a>, <a href="../../../t/i/z/User%7ETizio_edab.html" title="User:Tizio">Tizio</a>, <a href="../../../b/a/x/User%7EBAxelrod_0a95.html" title="User:BAxelrod">BAxelrod</a>, <a href="../../../e/l/_/User%7EEl_C_6d95.html" title="User:El C">El C</a>, <a href="../../../o/w/l/User%7EOwl_afdb.html" title="User:Owl">Owl</a>, Æ, <a href="../../../m/h/s/User%7EMhss_en_0b75.html" title="User:Mhss en">Mhss en</a>, <a href="../../../l/u/m/User%7ELumiere_50cb.html" title="User:Lumiere">Lumiere</a>, <a href="../../../z/e/r/User%7EZerofoks_be6e.html" title="User:Zerofoks">Zerofoks</a>, <a href="../../../p/g/a/User%7EPgan002_fb49.html" title="User:Pgan002">Pgan002</a>, <a href="../../../f/l/a/User%7EFlammifer_bbb8.html" title="User:Flammifer">Flammifer</a>, <a href="../../../r/o/b/User%7ERobert_Horning_299d.html" title="User:Robert Horning">Robert Horning</a>, <a href="../../../p/m/u/User%7EPmurray_bigpond.com_8f29.html" title="User:Pmurray bigpond.com">Pmurray bigpond.com</a>, <a href="../../../j/i/m/User%7EJimWae_0457.html" title="User:JimWae">JimWae</a>, <a href="../../../m/i/c/User%7EMichael_Hardy_e932.html" title="User:Michael Hardy">Michael Hardy</a>, Sbarthelme, <a href="../../../t/i/m/User%7ETimo_Honkasalo_9467.html" title="User:Timo Honkasalo">Timo Honkasalo</a>, <a href="../../../t/e/z/User%7ETez_86d7.html" title="User:Tez">Tez</a>, <a href="../../../i/t/a/User%7EItai_a5d4.html" title="User:Itai">Itai</a>, <a href="../../../w/a/p/User%7EWapcaplet_7f49.html" title="User:Wapcaplet">Wapcaplet</a>, <a href="../../../g/u/a/User%7EGuanabot_b902.html" title="User:Guanabot">Guanabot</a>, <a href="../../../f/i/p/User%7EFiP_20ec.html" title="User:FiP">FiP</a>, <a href="../../../a/n/g/User%7EAngela_56ea.html" title="User:Angela">Angela</a>, <a href="../../../m/a/x/User%7EMaximus_Rex_f7db.html" title="User:Maximus Rex">Maximus Rex</a>, <a href="../../../f/r/e/User%7EFredrik_8a6d.html" title="User:Fredrik">Fredrik</a>, Zuidervled, <a href="../../../k/a/r/User%7EKarada_595b.html" title="User:Karada">Karada</a>, Mathiasp, Chapplek, <a href="../../../t/o/b/User%7EToby_Bartels_e090.html" title="User:Toby Bartels">Toby Bartels</a>, <a href="../../../z/o/i/User%7EZoicon5_c684.html" title="User:Zoicon5">Zoicon5</a> and <a href="../../../e/l/l/User%7EEllmist_6655.html" title="User:Ellmist">Ellmist</a> and Anonymous user(s) of Wikipedia.</li>	  <li id="f-copyright">All text is available under the terms of the <a class='internal' href="../../../t/e/x/Wikipedia%7EText_of_the_GNU_Free_Documentation_License_702a.html" title="Wikipedia:Text of the GNU Free Documentation License">GNU Free Documentation License</a>. (See <b><a class='internal' href="../../../c/o/p/Wikipedia%7ECopyrights_92c4.html" title="Wikipedia:Copyrights">Copyrights</a></b> for details.) <br /> Wikipedia&reg; is a registered trademark of the Wikimedia Foundation, Inc.<br /></li>	  <li id="f-about"><a href="../../../a/b/o/Wikipedia%7EAbout_8d82.html" title="Wikipedia:About">About Wikipedia</a></li>	  <li id="f-disclaimer"><a href="../../../g/e/n/Wikipedia%7EGeneral_disclaimer_3e44.html" title="Wikipedia:General disclaimer">Disclaimers</a></li>	  	</ul>
+      </div>
+    </div>
+  </body>
+</html>
