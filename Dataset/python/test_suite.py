@@ -38,7 +38,7 @@ class Options(object):
 def test_00_update():
     from pythonbrew.commands.update import UpdateCommand
     c = UpdateCommand()
-    c.run_command(Options({'master':False, 'develop':False, 'config':False, 'force':False}), 
+    c.run_command(Options({'main':False, 'develop':False, 'config':False, 'force':False}), 
                   None)
 
 def test_01_help():

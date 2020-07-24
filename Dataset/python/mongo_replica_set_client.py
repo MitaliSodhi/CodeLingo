@@ -117,7 +117,7 @@ def _partition_node(node):
 # In __init__, MongoReplicaSetClient gets a list of potential members called
 # 'seeds' from its initial parameters, and calls refresh(). refresh() iterates
 # over the the seeds in arbitrary order looking for a member it can connect to.
-# Once it finds one, it calls 'ismaster' and sets self.__hosts to the list of
+# Once it finds one, it calls 'ismain' and sets self.__hosts to the list of
 # members in the response, and connects to the rest of the members. refresh()
 # sets the MongoReplicaSetClient's RSState. Finally, __init__ launches the
 # replica-set monitor.
@@ -396,44 +396,44 @@ class Member(object):
     :Parameters:
       - `host`: A (host, port) pair
       - `connection_pool`: A Pool instance
-      - `ismaster_response`: A dict, MongoDB's ismaster response
+      - `ismain_response`: A dict, MongoDB's ismain response
       - `ping_time`: A MovingAverage instance
       - `up`: Whether we think this member is available
     """
     # For unittesting only. Use under no circumstances!
     _host_to_ping_time = {}
 
-    def __init__(self, host, connection_pool, ismaster_response, ping_time, up):
+    def __init__(self, host, connection_pool, ismain_response, ping_time, up):
         self.host = host
         self.pool = connection_pool
-        self.ismaster_response = ismaster_response
+        self.ismain_response = ismain_response
         self.ping_time = ping_time
         self.up = up
 
-        if ismaster_response['ismaster']:
+        if ismain_response['ismain']:
             self.state = PRIMARY
-        elif ismaster_response.get('secondary'):
+        elif ismain_response.get('secondary'):
             self.state = SECONDARY
         else:
             self.state = OTHER
 
-        self.tags = ismaster_response.get('tags', {})
-        self.max_bson_size = ismaster_response.get(
+        self.tags = ismain_response.get('tags', {})
+        self.max_bson_size = ismain_response.get(
             'maxBsonObjectSize', common.MAX_BSON_SIZE)
-        self.max_message_size = ismaster_response.get(
+        self.max_message_size = ismain_response.get(
             'maxMessageSizeBytes', 2 * self.max_bson_size)
 
-    def clone_with(self, ismaster_response, ping_time_sample):
-        """Get a clone updated with ismaster response and a single ping time.
+    def clone_with(self, ismain_response, ping_time_sample):
+        """Get a clone updated with ismain response and a single ping time.
         """
         ping_time = self.ping_time.clone_with(ping_time_sample)
-        return Member(self.host, self.pool, ismaster_response, ping_time, True)
+        return Member(self.host, self.pool, ismain_response, ping_time, True)
 
     def clone_down(self):
         """Get a clone of this Member, but with up=False.
         """
         return Member(
-            self.host, self.pool, self.ismaster_response, self.ping_time,
+            self.host, self.pool, self.ismain_response, self.ping_time,
             False)
 
     @property
@@ -737,8 +737,8 @@ class MongoReplicaSetClient(common.BaseObject):
                                      "from PyPI.")
 
         super(MongoReplicaSetClient, self).__init__(**self.__opts)
-        if self.slave_okay:
-            warnings.warn("slave_okay is deprecated. Please "
+        if self.subordinate_okay:
+            warnings.warn("subordinate_okay is deprecated. Please "
                           "use read_preference instead.", DeprecationWarning,
                           stacklevel=2)
 
@@ -911,7 +911,7 @@ class MongoReplicaSetClient(common.BaseObject):
     def hosts(self):
         """All active and passive (priority 0) replica set
         members known to this client. This does not include
-        hidden or slaveDelay members, or arbiters.
+        hidden or subordinateDelay members, or arbiters.
 
         A sequence of (host, port) pairs.
         """
@@ -1042,8 +1042,8 @@ class MongoReplicaSetClient(common.BaseObject):
         helpers._check_command_response(response, None, msg)
         return response, end - start
 
-    def __is_master(self, host):
-        """Directly call ismaster.
+    def __is_main(self, host):
+        """Directly call ismain.
            Returns (response, connection_pool, ping_time in seconds).
         """
         connection_pool = self.pool_class(
@@ -1066,7 +1066,7 @@ class MongoReplicaSetClient(common.BaseObject):
         sock_info = connection_pool.get_socket()
         try:
             response, ping_time = self.__simple_command(
-                sock_info, 'admin', {'ismaster': 1}
+                sock_info, 'admin', {'ismain': 1}
             )
 
             connection_pool.maybe_return_socket(sock_info)
@@ -1144,11 +1144,11 @@ class MongoReplicaSetClient(common.BaseObject):
                 if member:
                     sock_info = self.__socket(member, force=True)
                     response, ping_time = self.__simple_command(
-                        sock_info, 'admin', {'ismaster': 1})
+                        sock_info, 'admin', {'ismain': 1})
                     member.pool.maybe_return_socket(sock_info)
                     new_member = member.clone_with(response, ping_time)
                 else:
-                    response, pool, ping_time = self.__is_master(node)
+                    response, pool, ping_time = self.__is_main(node)
                     new_member = Member(
                         node, pool, response, MovingAverage([ping_time]), True)
 
@@ -1178,7 +1178,7 @@ class MongoReplicaSetClient(common.BaseObject):
                 # but don't add seed list members.
                 if node in hosts:
                     members[node] = new_member
-                    if response['ismaster']:
+                    if response['ismain']:
                         writer = node
 
             except (ConnectionFailure, socket.error), why:
@@ -1203,7 +1203,7 @@ class MongoReplicaSetClient(common.BaseObject):
                 if member:
                     sock_info = self.__socket(member, force=True)
                     res, ping_time = self.__simple_command(
-                        sock_info, 'admin', {'ismaster': 1})
+                        sock_info, 'admin', {'ismain': 1})
 
                     if res.get('setName') != self.__name:
                         # Not a member of this set.
@@ -1212,7 +1212,7 @@ class MongoReplicaSetClient(common.BaseObject):
                     member.pool.maybe_return_socket(sock_info)
                     new_member = member.clone_with(res, ping_time)
                 else:
-                    res, connection_pool, ping_time = self.__is_master(host)
+                    res, connection_pool, ping_time = self.__is_main(host)
                     if res.get('setName') != self.__name:
                         # Not a member of this set.
                         continue
@@ -1228,7 +1228,7 @@ class MongoReplicaSetClient(common.BaseObject):
                     member.pool.discard_socket(sock_info)
                 continue
 
-            if res['ismaster']:
+            if res['ismain']:
                 writer = host
 
         if writer == rs_state.writer:
@@ -1378,7 +1378,7 @@ class MongoReplicaSetClient(common.BaseObject):
         error_msg = error.get("err", "")
         if error_msg is None:
             return error
-        if error_msg.startswith("not master"):
+        if error_msg.startswith("not main"):
             self.disconnect()
             raise AutoReconnect(error_msg)
 
@@ -1544,7 +1544,7 @@ class MongoReplicaSetClient(common.BaseObject):
             raise AutoReconnect("%s:%d: %s" % (host, port, why))
 
     def _send_message_with_response(self, msg, _connection_to_use=None,
-                                    _must_use_master=False, **kwargs):
+                                    _must_use_main=False, **kwargs):
         """Send a message to Mongo and return the response.
 
         Sends the given message and returns (host used, response).
@@ -1553,14 +1553,14 @@ class MongoReplicaSetClient(common.BaseObject):
           - `msg`: (request_id, data) pair making up the message to send
           - `_connection_to_use`: Optional (host, port) of member for message,
             used by Cursor for getMore and killCursors messages.
-          - `_must_use_master`: If True, send to primary.
+          - `_must_use_main`: If True, send to primary.
         """
         self._ensure_connected()
 
         rs_state = self.__rs_state
         tag_sets = kwargs.get('tag_sets', [{}])
         mode = kwargs.get('read_preference', ReadPreference.PRIMARY)
-        if _must_use_master:
+        if _must_use_main:
             mode = ReadPreference.PRIMARY
             tag_sets = [{}]
 
@@ -1614,7 +1614,7 @@ class MongoReplicaSetClient(common.BaseObject):
                     pinned_member.host,
                     self.__try_read(pinned_member, msg, **kwargs))
             except AutoReconnect, why:
-                if _must_use_master or mode == ReadPreference.PRIMARY:
+                if _must_use_main or mode == ReadPreference.PRIMARY:
                     self.disconnect()
                     raise
                 else:

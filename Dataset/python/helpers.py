@@ -96,7 +96,7 @@ def _unpack_response(response, cursor_id=None, as_class=dict,
                                cursor_id)
     elif response_flag & 2:
         error_object = bson.BSON(response[20:]).decode()
-        if error_object["$err"].startswith("not master"):
+        if error_object["$err"].startswith("not main"):
             raise AutoReconnect(error_object["$err"])
         elif error_object.get("code") == 50:
             raise ExecutionTimeout(error_object.get("$err"),
@@ -150,8 +150,8 @@ def _check_command_response(response, reset, msg=None, allowable_errors=None):
         errmsg = details["errmsg"]
         if allowable_errors is None or errmsg not in allowable_errors:
 
-            # Server is "not master" or "recovering"
-            if (errmsg.startswith("not master")
+            # Server is "not main" or "recovering"
+            if (errmsg.startswith("not main")
                 or errmsg.startswith("node is recovering")):
                 if reset is not None:
                     reset()

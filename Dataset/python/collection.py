@@ -82,7 +82,7 @@ class Collection(common.BaseObject):
         .. mongodoc:: collections
         """
         super(Collection, self).__init__(
-            slave_okay=database.slave_okay,
+            subordinate_okay=database.subordinate_okay,
             read_preference=database.read_preference,
             tag_sets=database.tag_sets,
             secondary_acceptable_latency_ms=(
@@ -323,9 +323,9 @@ class Collection(common.BaseObject):
 
         .. mongodoc:: insert
         """
-        # Batch inserts require us to know the connected master's
+        # Batch inserts require us to know the connected main's
         # max_bson_size and max_message_size. We have to be connected
-        # to a master to know that.
+        # to a main to know that.
         self.database.connection._ensure_connected(True)
 
         docs = doc_or_docs
@@ -670,7 +670,7 @@ class Collection(common.BaseObject):
           - `as_class` (optional): class to use for documents in the
             query result (default is
             :attr:`~pymongo.mongo_client.MongoClient.document_class`)
-          - `slave_okay` (optional): if True, allows this query to
+          - `subordinate_okay` (optional): if True, allows this query to
             be run against a replica secondary.
           - `await_data` (optional): if True, the server will block for
             some extra time before returning, waiting for more data to
@@ -751,8 +751,8 @@ class Collection(common.BaseObject):
         .. mongodoc:: find
         .. _localThreshold: http://docs.mongodb.org/manual/reference/mongos/#cmdoption-mongos--localThreshold
         """
-        if not 'slave_okay' in kwargs:
-            kwargs['slave_okay'] = self.slave_okay
+        if not 'subordinate_okay' in kwargs:
+            kwargs['subordinate_okay'] = self.subordinate_okay
         if not 'read_preference' in kwargs:
             kwargs['read_preference'] = self.read_preference
         if not 'tag_sets' in kwargs:
@@ -1081,11 +1081,11 @@ class Collection(common.BaseObject):
         collection.
 
         With :class:`~pymongo.mongo_replica_set_client.MongoReplicaSetClient`
-        or :class:`~pymongo.master_slave_connection.MasterSlaveConnection`,
+        or :class:`~pymongo.main_subordinate_connection.MainSubordinateConnection`,
         if the `read_preference` attribute of this instance is not set to
         :attr:`pymongo.read_preferences.ReadPreference.PRIMARY` or the
-        (deprecated) `slave_okay` attribute of this instance is set to `True`
-        the `aggregate command`_ will be sent to a secondary or slave.
+        (deprecated) `subordinate_okay` attribute of this instance is set to `True`
+        the `aggregate command`_ will be sent to a secondary or subordinate.
 
         :Parameters:
           - `pipeline`: a single command or list of aggregation commands
@@ -1115,7 +1115,7 @@ class Collection(common.BaseObject):
         if isinstance(pipeline, dict):
             pipeline = [pipeline]
 
-        use_master = not self.slave_okay and not self.read_preference
+        use_main = not self.subordinate_okay and not self.read_preference
 
         command_kwargs = {
             'pipeline': pipeline,
@@ -1123,8 +1123,8 @@ class Collection(common.BaseObject):
             'tag_sets': self.tag_sets,
             'secondary_acceptable_latency_ms': (
                 self.secondary_acceptable_latency_ms),
-            'slave_okay': self.slave_okay,
-            '_use_master': use_master}
+            'subordinate_okay': self.subordinate_okay,
+            '_use_main': use_main}
 
         command_kwargs.update(kwargs)
         command_response = self.__database.command(
@@ -1157,12 +1157,12 @@ class Collection(common.BaseObject):
             to group by.
 
         With :class:`~pymongo.mongo_replica_set_client.MongoReplicaSetClient`
-        or :class:`~pymongo.master_slave_connection.MasterSlaveConnection`,
+        or :class:`~pymongo.main_subordinate_connection.MainSubordinateConnection`,
         if the `read_preference` attribute of this instance is not set to
         :attr:`pymongo.read_preferences.ReadPreference.PRIMARY` or
         :attr:`pymongo.read_preferences.ReadPreference.PRIMARY_PREFERRED`, or
-        the (deprecated) `slave_okay` attribute of this instance is set to
-        `True`, the group command will be sent to a secondary or slave.
+        the (deprecated) `subordinate_okay` attribute of this instance is set to
+        `True`, the group command will be sent to a secondary or subordinate.
 
         :Parameters:
           - `key`: fields to group by (see above description)
@@ -1195,7 +1195,7 @@ class Collection(common.BaseObject):
         if finalize is not None:
             group["finalize"] = Code(finalize)
 
-        use_master = not self.slave_okay and not self.read_preference
+        use_main = not self.subordinate_okay and not self.read_preference
 
         return self.__database.command("group", group,
                                        uuid_subtype=self.uuid_subtype,
@@ -1203,8 +1203,8 @@ class Collection(common.BaseObject):
                                        tag_sets=self.tag_sets,
                                        secondary_acceptable_latency_ms=(
                                            self.secondary_acceptable_latency_ms),
-                                       slave_okay=self.slave_okay,
-                                       _use_master=use_master,
+                                       subordinate_okay=self.subordinate_okay,
+                                       _use_main=use_main,
                                        **kwargs)["retval"]
 
     def rename(self, new_name, **kwargs):
@@ -1305,9 +1305,9 @@ class Collection(common.BaseObject):
                             "%s or dict" % (basestring.__name__,))
 
         if isinstance(out, dict) and out.get('inline'):
-            must_use_master = False
+            must_use_main = False
         else:
-            must_use_master = True
+            must_use_main = True
 
         response = self.__database.command("mapreduce", self.__name,
                                            uuid_subtype=self.uuid_subtype,
@@ -1316,7 +1316,7 @@ class Collection(common.BaseObject):
                                            tag_sets=self.tag_sets,
                                            secondary_acceptable_latency_ms=(
                                                self.secondary_acceptable_latency_ms),
-                                           out=out, _use_master=must_use_master,
+                                           out=out, _use_main=must_use_main,
                                            **kwargs)
 
         if full_response or not response.get('result'):
@@ -1340,12 +1340,12 @@ class Collection(common.BaseObject):
         response from the server to the `map reduce command`_.
 
         With :class:`~pymongo.mongo_replica_set_client.MongoReplicaSetClient`
-        or :class:`~pymongo.master_slave_connection.MasterSlaveConnection`,
+        or :class:`~pymongo.main_subordinate_connection.MainSubordinateConnection`,
         if the `read_preference` attribute of this instance is not set to
         :attr:`pymongo.read_preferences.ReadPreference.PRIMARY` or
         :attr:`pymongo.read_preferences.ReadPreference.PRIMARY_PREFERRED`, or
-        the (deprecated) `slave_okay` attribute of this instance is set to
-        `True`, the inline map reduce will be run on a secondary or slave.
+        the (deprecated) `subordinate_okay` attribute of this instance is set to
+        `True`, the inline map reduce will be run on a secondary or subordinate.
 
         :Parameters:
           - `map`: map function (as a JavaScript string)
@@ -1363,7 +1363,7 @@ class Collection(common.BaseObject):
         .. versionadded:: 1.10
         """
 
-        use_master = not self.slave_okay and not self.read_preference
+        use_main = not self.subordinate_okay and not self.read_preference
 
         res = self.__database.command("mapreduce", self.__name,
                                       uuid_subtype=self.uuid_subtype,
@@ -1371,8 +1371,8 @@ class Collection(common.BaseObject):
                                       tag_sets=self.tag_sets,
                                       secondary_acceptable_latency_ms=(
                                           self.secondary_acceptable_latency_ms),
-                                      slave_okay=self.slave_okay,
-                                      _use_master=use_master,
+                                      subordinate_okay=self.subordinate_okay,
+                                      _use_main=use_main,
                                       map=map, reduce=reduce,
                                       out={"inline": 1}, **kwargs)
 

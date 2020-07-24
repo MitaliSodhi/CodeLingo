@@ -91,7 +91,7 @@ class TestGSSAPI(unittest.TestCase):
         client = MongoClient(uri)
         self.assertTrue(client.database_names())
 
-        set_name = client.admin.command('ismaster').get('setName')
+        set_name = client.admin.command('ismain').get('setName')
         if set_name:
             client = MongoReplicaSetClient(GSSAPI_HOST,
                                            port=GSSAPI_PORT,
@@ -136,7 +136,7 @@ class TestGSSAPI(unittest.TestCase):
             thread.join()
             self.assertTrue(thread.success)
 
-        set_name = client.admin.command('ismaster').get('setName')
+        set_name = client.admin.command('ismain').get('setName')
         if set_name:
             preference = ReadPreference.SECONDARY
             client = MongoReplicaSetClient(GSSAPI_HOST,
@@ -175,7 +175,7 @@ class TestSASL(unittest.TestCase):
                                   SASL_HOST, SASL_PORT, SASL_DB))
         client = MongoClient(uri)
 
-        set_name = client.admin.command('ismaster').get('setName')
+        set_name = client.admin.command('ismain').get('setName')
         if set_name:
             client = MongoReplicaSetClient(SASL_HOST,
                                            port=SASL_PORT,
@@ -199,7 +199,7 @@ class TestAuthURIOptions(unittest.TestCase):
             raise SkipTest("Auth with sharding requires MongoDB >= 2.0.0")
         if not server_started_with_auth(client):
             raise SkipTest('Authentication is not enabled on server')
-        response = client.admin.command('ismaster')
+        response = client.admin.command('ismain')
         self.set_name = str(response.get('setName', ''))
         client.admin.add_user('admin', 'pass', roles=['userAdminAnyDatabase',
                                                       'dbAdminAnyDatabase',

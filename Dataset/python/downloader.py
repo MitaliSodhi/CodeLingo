@@ -20,7 +20,7 @@ class Downloader(object):
         c.fetch(url, path)
 
 def get_pythonbrew_update_url(version):
-    if version == "master":
+    if version == "main":
         return PYTHONBREW_UPDATE_URL_MASTER
     elif version == 'develop':
         return PYTHONBREW_UPDATE_URL_DEVELOP

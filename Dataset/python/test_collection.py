@@ -1236,9 +1236,9 @@ class TestCollection(unittest.TestCase):
         self.db.test.remove({"x": 1}, w=1, wtimeout=1)
         self.db.test.update({"x": 1}, {"y": 2}, w=1, wtimeout=1)
 
-        ismaster = self.client.admin.command("ismaster")
-        if ismaster.get("setName"):
-            w = len(ismaster["hosts"]) + 1
+        ismain = self.client.admin.command("ismain")
+        if ismain.get("setName"):
+            w = len(ismain["hosts"]) + 1
             self.assertRaises(WTimeoutError, self.db.test.save,
                               {"x": 1}, w=w, wtimeout=1)
             self.assertRaises(WTimeoutError, self.db.test.insert,

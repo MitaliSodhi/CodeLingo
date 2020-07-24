@@ -60,7 +60,7 @@ class Database(common.BaseObject):
         .. mongodoc:: databases
         """
         super(Database,
-              self).__init__(slave_okay=connection.slave_okay,
+              self).__init__(subordinate_okay=connection.subordinate_okay,
                              read_preference=connection.read_preference,
                              tag_sets=connection.tag_sets,
                              secondary_acceptable_latency_ms=(
@@ -365,27 +365,27 @@ class Database(common.BaseObject):
             command = SON([(command, value)])
 
         command_name = command.keys()[0].lower()
-        must_use_master = kwargs.pop('_use_master', False)
+        must_use_main = kwargs.pop('_use_main', False)
         if command_name not in rp.secondary_ok_commands:
-            must_use_master = True
+            must_use_main = True
 
         # Special-case: mapreduce can go to secondaries only if inline
         if command_name == 'mapreduce':
             out = command.get('out') or kwargs.get('out')
             if not isinstance(out, dict) or not out.get('inline'):
-                must_use_master = True
+                must_use_main = True
 
         # Special-case: aggregate with $out cannot go to secondaries.
         if command_name == 'aggregate':
             for stage in kwargs.get('pipeline', []):
                 if '$out' in stage:
-                    must_use_master = True
+                    must_use_main = True
                     break
 
         extra_opts = {
             'as_class': kwargs.pop('as_class', None),
-            'slave_okay': kwargs.pop('slave_okay', self.slave_okay),
-            '_must_use_master': must_use_master,
+            'subordinate_okay': kwargs.pop('subordinate_okay', self.subordinate_okay),
+            '_must_use_main': must_use_main,
             '_uuid_subtype': uuid_subtype
         }
 
@@ -406,9 +406,9 @@ class Database(common.BaseObject):
 
         command.update(kwargs)
 
-        # Warn if must_use_master will override read_preference.
+        # Warn if must_use_main will override read_preference.
         if (extra_opts['read_preference'] != rp.ReadPreference.PRIMARY and
-                extra_opts['_must_use_master']):
+                extra_opts['_must_use_main']):
             warnings.warn("%s does not support %s read preference "
                           "and will be routed to the primary instead." %
                           (command_name,
@@ -431,7 +431,7 @@ class Database(common.BaseObject):
           - `include_system_collections` (optional): if ``False`` list
             will not include system collections (e.g ``system.indexes``)
         """
-        results = self["system.namespaces"].find(_must_use_master=True)
+        results = self["system.namespaces"].find(_must_use_main=True)
         names = [r["name"] for r in results]
         names = [n[len(self.__name) + 1:] for n in names
                  if n.startswith(self.__name + ".") and "$" not in n]
@@ -604,7 +604,7 @@ class Database(common.BaseObject):
         error_msg = error.get("err", "")
         if error_msg is None:
             return None
-        if error_msg.startswith("not master"):
+        if error_msg.startswith("not main"):
             self.__connection.disconnect()
         return error
 

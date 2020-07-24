@@ -63,34 +63,34 @@ class MockClientBase(object):
         # Hosts that should raise socket errors.
         self.mock_down_hosts = []
 
-        # Hosts that should respond to ismaster as if they're standalone.
+        # Hosts that should respond to ismain as if they're standalone.
         self.mock_standalone_hosts = []
 
-    def mock_is_master(self, host):
+    def mock_is_main(self, host):
         if host in self.mock_down_hosts:
             raise socket.timeout('timed out')
 
         if host in self.mock_standalone_hosts:
-            return {'ismaster': True}
+            return {'ismain': True}
 
         if host not in self.mock_hosts:
             # Host removed from set by a reconfig.
-            return {'ismaster': False, 'secondary': False}
+            return {'ismain': False, 'secondary': False}
 
-        ismaster = host == MOCK_PRIMARY
+        ismain = host == MOCK_PRIMARY
 
         # Simulate a replica set member.
         return {
-            'ismaster': ismaster,
-            'secondary': not ismaster,
+            'ismain': ismain,
+            'secondary': not ismain,
             'setName': MOCK_RS_NAME,
             'hosts': self.mock_hosts}
 
     def simple_command(self, sock_info, dbname, spec):
         # __simple_command is also used for authentication, but in this
-        # test it's only used for ismaster.
-        assert spec == {'ismaster': 1}
-        response = self.mock_is_master('%s:%s' % (sock_info.host, 27017))
+        # test it's only used for ismain.
+        assert spec == {'ismain': 1}
+        response = self.mock_is_main('%s:%s' % (sock_info.host, 27017))
         ping_time = 10
         return response, ping_time
 
@@ -116,8 +116,8 @@ class MockReplicaSetClient(MockClientBase, MongoReplicaSetClient):
             hosts,
             replicaSet=MOCK_RS_NAME)
 
-    def _MongoReplicaSetClient__is_master(self, host):
-        response = self.mock_is_master('%s:%s' % host)
+    def _MongoReplicaSetClient__is_main(self, host):
+        response = self.mock_is_main('%s:%s' % host)
         connection_pool = MockPool(host)
         ping_time = 10
         return response, connection_pool, ping_time

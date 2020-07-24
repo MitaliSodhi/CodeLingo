@@ -16,11 +16,11 @@ class UpdateCommand(Command):
     def __init__(self):
         super(UpdateCommand, self).__init__()
         self.parser.add_option(
-            '--master',
-            dest='master',
+            '--main',
+            dest='main',
             action='store_true',
             default=False,
-            help='Update the pythonbrew to the `master` branch on github.'
+            help='Update the pythonbrew to the `main` branch on github.'
         )
         self.parser.add_option(
             '--config',
@@ -61,8 +61,8 @@ class UpdateCommand(Command):
         logger.log("The config.cfg has been updated.")
     
     def _update_pythonbrew(self, options, args):
-        if options.master:
-            version = 'master'
+        if options.main:
+            version = 'main'
         else:
             version = get_stable_version()
             # check for version
@@ -76,7 +76,7 @@ class UpdateCommand(Command):
             sys.exit(1)
         headinfo = get_headerinfo_from_url(download_url)
         content_type = headinfo['content-type']
-        if not options.master:
+        if not options.main:
             if not is_gzip(content_type, Link(download_url).filename):
                 logger.error("content type should be gzip. content-type:`%s`" % content_type)
                 sys.exit(1)
