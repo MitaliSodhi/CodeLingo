@@ -75,7 +75,7 @@ VIRTUALENV_DLSITE = _get_or_default('virtualenv', 'url')
 VIRTUALENV_CLONE_DLSITE = _get_or_default('virtualenv-clone', 'url')
 
 # pythonbrew download
-PYTHONBREW_UPDATE_URL_MASTER = _get_or_default('pythonbrew', 'master')
+PYTHONBREW_UPDATE_URL_MASTER = _get_or_default('pythonbrew', 'main')
 PYTHONBREW_UPDATE_URL_DEVELOP = _get_or_default('pythonbrew', 'develop')
 PYTHONBREW_UPDATE_URL_PYPI = _get_or_default('pythonbrew', 'pypi')
 PYTHONBREW_UPDATE_URL_CONFIG = _get_or_default('pythonbrew', 'config')

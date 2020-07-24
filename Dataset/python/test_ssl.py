@@ -196,7 +196,7 @@ class TestSSL(unittest.TestCase):
         # Expects the server to be running with ssl and with
         # no --sslPEMKeyFile or with --sslWeakCertificateValidation
         client = MongoClient(host, port, ssl=True)
-        response = client.admin.command('ismaster')
+        response = client.admin.command('ismain')
         if 'setName' in response:
             client = MongoReplicaSetClient(pair,
                                            replicaSet=response['setName'],
@@ -222,7 +222,7 @@ class TestSSL(unittest.TestCase):
             raise SkipTest("No mongod available over SSL with certs")
 
         client = MongoClient(host, port, ssl=True, ssl_certfile=CLIENT_PEM)
-        response = client.admin.command('ismaster')
+        response = client.admin.command('ismain')
         if 'setName' in response:
             client = MongoReplicaSetClient(pair,
                                            replicaSet=response['setName'],
@@ -248,7 +248,7 @@ class TestSSL(unittest.TestCase):
             raise SkipTest("No mongod available over SSL with certs")
 
         client = MongoClient(host, port, ssl_certfile=CLIENT_PEM)
-        response = client.admin.command('ismaster')
+        response = client.admin.command('ismain')
         if 'setName' in response:
             client = MongoReplicaSetClient(pair,
                                            replicaSet=response['setName'],
@@ -282,7 +282,7 @@ class TestSSL(unittest.TestCase):
                              ssl_certfile=CLIENT_PEM,
                              ssl_cert_reqs=ssl.CERT_REQUIRED,
                              ssl_ca_certs=CA_PEM)
-        response = client.admin.command('ismaster')
+        response = client.admin.command('ismain')
         if 'setName' in response:
             if response['primary'].split(":")[0] != 'server':
                 raise SkipTest("No hosts in the replicaset for 'server'. "
@@ -324,7 +324,7 @@ class TestSSL(unittest.TestCase):
                              ssl_cert_reqs=ssl.CERT_OPTIONAL,
                              ssl_ca_certs=CA_PEM)
 
-        response = client.admin.command('ismaster')
+        response = client.admin.command('ismain')
         if 'setName' in response:
             if response['primary'].split(":")[0] != 'server':
                 raise SkipTest("No hosts in the replicaset for 'server'. "
@@ -355,7 +355,7 @@ class TestSSL(unittest.TestCase):
             raise SkipTest("No mongod available over SSL with certs")
 
         client = MongoClient(host, port, ssl=True, ssl_certfile=CLIENT_PEM)
-        response = client.admin.command('ismaster')
+        response = client.admin.command('ismain')
         single_server = 'setName' not in response
 
         if single_server:

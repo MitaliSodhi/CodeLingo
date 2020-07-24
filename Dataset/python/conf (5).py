@@ -3,7 +3,7 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx',
               'sphinx.ext.todo', 'sphinx.ext.viewcode']
 templates_path = ['_templates']
 source_suffix = '.rst'
-master_doc = 'index'
+main_doc = 'index'
 project = u'Python Social Auth'
 copyright = u'2012, Matías Aguirre'
 exclude_patterns = ['_build']

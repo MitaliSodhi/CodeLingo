@@ -110,32 +110,32 @@ def parse_info(response):
 
 
 SENTINEL_STATE_TYPES = {
-    'can-failover-its-master': int,
+    'can-failover-its-main': int,
     'info-refresh': int,
     'last-hello-message': int,
     'last-ok-ping-reply': int,
     'last-ping-reply': int,
-    'master-link-down-time': int,
-    'master-port': int,
+    'main-link-down-time': int,
+    'main-port': int,
     'num-other-sentinels': int,
-    'num-slaves': int,
+    'num-subordinates': int,
     'o-down-time': int,
     'pending-commands': int,
     'port': int,
     'quorum': int,
     's-down-time': int,
-    'slave-priority': int,
+    'subordinate-priority': int,
 }
 
 
 def parse_sentinel_state(item):
     result = pairs_to_dict_typed(item, SENTINEL_STATE_TYPES)
     flags = set(result['flags'].split(','))
-    for name, flag in (('is_master', 'master'), ('is_slave', 'slave'),
+    for name, flag in (('is_main', 'main'), ('is_subordinate', 'subordinate'),
                        ('is_sdown', 's_down'), ('is_odown', 'o_down'),
                        ('is_sentinel', 'sentinel'),
                        ('is_disconnected', 'disconnected'),
-                       ('is_master_down', 'master_down')):
+                       ('is_main_down', 'main_down')):
         result[name] = flag in flags
     return result
 
@@ -549,20 +549,20 @@ class StrictRedis(object):
 
     def sentinel(self, *args):
         "Redis Sentinel's SENTINEL command"
-        if args[0] in ['masters', 'slaves', 'sentinels']:
+        if args[0] in ['mains', 'subordinates', 'sentinels']:
             parse = 'SENTINEL_INFO'
         else:
             parse = 'SENTINEL'
         return self.execute_command('SENTINEL', *args, **{'parse': parse})
 
-    def sentinel_masters(self):
-        "Returns a dictionary containing the master's state."
-        return self.execute_command('SENTINEL', 'masters',
+    def sentinel_mains(self):
+        "Returns a dictionary containing the main's state."
+        return self.execute_command('SENTINEL', 'mains',
                                     parse='SENTINEL_INFO_MASTERS')
 
-    def sentinel_slaves(self, service_name):
-        "Returns a list of slaves for ``service_name``"
-        return self.execute_command('SENTINEL', 'slaves', service_name,
+    def sentinel_subordinates(self, service_name):
+        "Returns a list of subordinates for ``service_name``"
+        return self.execute_command('SENTINEL', 'subordinates', service_name,
                                     parse='SENTINEL_INFO')
 
     def sentinel_sentinels(self, service_name):
@@ -570,9 +570,9 @@ class StrictRedis(object):
         return self.execute_command('SENTINEL', 'sentinels', service_name,
                                     parse='SENTINEL_INFO')
 
-    def sentinel_get_master_addr_by_name(self, service_name):
+    def sentinel_get_main_addr_by_name(self, service_name):
         "Returns a (host, port) pair for the given ``service_name``"
-        return self.execute_command('SENTINEL', 'get-master-addr-by-name',
+        return self.execute_command('SENTINEL', 'get-main-addr-by-name',
                                     service_name, parse='SENTINEL_ADDR_PORT')
 
     def shutdown(self):
@@ -584,11 +584,11 @@ class StrictRedis(object):
             return
         raise RedisError("SHUTDOWN seems to have failed.")
 
-    def slaveof(self, host=None, port=None):
+    def subordinateof(self, host=None, port=None):
         """
-        Set the server to be a replicated slave of the instance identified
+        Set the server to be a replicated subordinate of the instance identified
         by the ``host`` and ``port``. If called without arguements, the
-        instance is promoted to a master instead.
+        instance is promoted to a main instead.
         """
         if host is None and port is None:
             return self.execute_command("SLAVEOF", "NO", "ONE")

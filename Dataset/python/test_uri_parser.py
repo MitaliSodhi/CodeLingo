@@ -198,15 +198,15 @@ class TestURI(unittest.TestCase):
 
         res = copy.deepcopy(orig)
         res['nodelist'] = [("::1", 27017)]
-        res['options'] = {'slaveok': True}
-        self.assertEqual(res, parse_uri("mongodb://[::1]:27017/?slaveOk=true"))
+        res['options'] = {'subordinateok': True}
+        self.assertEqual(res, parse_uri("mongodb://[::1]:27017/?subordinateOk=true"))
 
         res = copy.deepcopy(orig)
         res['nodelist'] = [("2001:0db8:85a3:0000:0000:8a2e:0370:7334", 27017)]
-        res['options'] = {'slaveok': True}
+        res['options'] = {'subordinateok': True}
         self.assertEqual(res, parse_uri(
                               "mongodb://[2001:0db8:85a3:0000:0000"
-                              ":8a2e:0370:7334]:27017/?slaveOk=true"))
+                              ":8a2e:0370:7334]:27017/?subordinateOk=true"))
 
         res = copy.deepcopy(orig)
         res['nodelist'] = [("/tmp/mongodb-27017.sock", None)]
@@ -274,10 +274,10 @@ class TestURI(unittest.TestCase):
         res = copy.deepcopy(orig)
         res.update({'username': 'fred', 'password': 'foobar'})
         res.update({'database': 'test', 'collection': 'yield_historical.in'})
-        res['options'] = {'slaveok': True}
+        res['options'] = {'subordinateok': True}
         self.assertEqual(res,
                          parse_uri("mongodb://fred:foobar@localhost/"
-                                   "test.yield_historical.in?slaveok=true"))
+                                   "test.yield_historical.in?subordinateok=true"))
 
         res = copy.deepcopy(orig)
         res['options'] = {'readpreference': ReadPreference.SECONDARY}

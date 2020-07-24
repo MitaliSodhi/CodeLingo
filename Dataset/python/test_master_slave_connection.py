@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Test for master slave connections."""
+"""Test for main subordinate connections."""
 
 import datetime
 import os
@@ -33,32 +33,32 @@ from pymongo.errors import AutoReconnect
 from pymongo.database import Database
 from pymongo.mongo_client import MongoClient
 from pymongo.collection import Collection
-from pymongo.master_slave_connection import MasterSlaveConnection
+from pymongo.main_subordinate_connection import MainSubordinateConnection
 from test import host, port, host2, port2, host3, port3
 from test.utils import TestRequestMixin
 
-class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
+class TestMainSubordinateConnection(unittest.TestCase, TestRequestMixin):
 
     def setUp(self):
-        self.master = MongoClient(host, port)
+        self.main = MongoClient(host, port)
 
-        self.slaves = []
+        self.subordinates = []
         try:
-            self.slaves.append(MongoClient(
+            self.subordinates.append(MongoClient(
                 host2, port2, read_preference=ReadPreference.SECONDARY))
         except ConnectionFailure:
             pass
 
         try:
-            self.slaves.append(MongoClient(
+            self.subordinates.append(MongoClient(
                 host3, port3, read_preference=ReadPreference.SECONDARY))
         except ConnectionFailure:
             pass
 
-        if not self.slaves:
-            raise SkipTest("Not connected to master-slave set")
+        if not self.subordinates:
+            raise SkipTest("Not connected to main-subordinate set")
 
-        self.client = MasterSlaveConnection(self.master, self.slaves)
+        self.client = MainSubordinateConnection(self.main, self.subordinates)
         self.db = self.client.pymongo_test
 
     def tearDown(self):
@@ -69,30 +69,30 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
             # that make this fail
             pass
 
-        self.master = self.slaves = self.db = self.client = None
-        super(TestMasterSlaveConnection, self).tearDown()
+        self.main = self.subordinates = self.db = self.client = None
+        super(TestMainSubordinateConnection, self).tearDown()
 
     def test_types(self):
-        self.assertRaises(TypeError, MasterSlaveConnection, 1)
-        self.assertRaises(TypeError, MasterSlaveConnection, self.master, 1)
-        self.assertRaises(TypeError, MasterSlaveConnection, self.master, [1])
+        self.assertRaises(TypeError, MainSubordinateConnection, 1)
+        self.assertRaises(TypeError, MainSubordinateConnection, self.main, 1)
+        self.assertRaises(TypeError, MainSubordinateConnection, self.main, [1])
 
     def test_use_greenlets(self):
         self.assertFalse(self.client.use_greenlets)
 
         if thread_util.have_gevent:
-            master = MongoClient(host, port, use_greenlets=True)
-            slaves = [
-                MongoClient(slave.host, slave.port, use_greenlets=True)
-                for slave in self.slaves]
+            main = MongoClient(host, port, use_greenlets=True)
+            subordinates = [
+                MongoClient(subordinate.host, subordinate.port, use_greenlets=True)
+                for subordinate in self.subordinates]
 
             self.assertTrue(
-                MasterSlaveConnection(master, slaves).use_greenlets)
+                MainSubordinateConnection(main, subordinates).use_greenlets)
 
     def test_repr(self):
         self.assertEqual(repr(self.client),
-                         "MasterSlaveConnection(%r, %r)" %
-                         (self.master, self.slaves))
+                         "MainSubordinateConnection(%r, %r)" %
+                         (self.main, self.subordinates))
 
     def test_disconnect(self):
         class MongoClient(object):
@@ -102,27 +102,27 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
             def disconnect(self):
                 self._disconnects += 1
 
-        self.client._MasterSlaveConnection__master = MongoClient()
-        self.client._MasterSlaveConnection__slaves = [MongoClient(),
+        self.client._MainSubordinateConnection__main = MongoClient()
+        self.client._MainSubordinateConnection__subordinates = [MongoClient(),
                                                       MongoClient()]
 
         self.client.disconnect()
         self.assertEqual(1,
-            self.client._MasterSlaveConnection__master._disconnects)
+            self.client._MainSubordinateConnection__main._disconnects)
         self.assertEqual(1,
-            self.client._MasterSlaveConnection__slaves[0]._disconnects)
+            self.client._MainSubordinateConnection__subordinates[0]._disconnects)
         self.assertEqual(1,
-            self.client._MasterSlaveConnection__slaves[1]._disconnects)
+            self.client._MainSubordinateConnection__subordinates[1]._disconnects)
 
-    def test_continue_until_slave_works(self):
-        class Slave(object):
+    def test_continue_until_subordinate_works(self):
+        class Subordinate(object):
             calls = 0
 
             def __init__(self, fail):
                 self._fail = fail
 
             def _send_message_with_response(self, *args, **kwargs):
-                Slave.calls += 1
+                Subordinate.calls += 1
                 if self._fail:
                     raise AutoReconnect()
                 return (None, 'sent')
@@ -131,8 +131,8 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
             last_idx = -1
 
             def __init__(self):
-                self._items = [Slave(True), Slave(True),
-                               Slave(False), Slave(True)]
+                self._items = [Subordinate(True), Subordinate(True),
+                               Subordinate(False), Subordinate(True)]
 
             def __len__(self):
                 return len(self._items)
@@ -141,30 +141,30 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
                 NotRandomList.last_idx = idx
                 return self._items.pop(0)
 
-        self.client._MasterSlaveConnection__slaves = NotRandomList()
+        self.client._MainSubordinateConnection__subordinates = NotRandomList()
 
         response = self.client._send_message_with_response('message')
         self.assertEqual((NotRandomList.last_idx, 'sent'), response)
         self.assertNotEqual(-1, NotRandomList.last_idx)
-        self.assertEqual(3, Slave.calls)
+        self.assertEqual(3, Subordinate.calls)
 
-    def test_raise_autoreconnect_if_all_slaves_fail(self):
-        class Slave(object):
+    def test_raise_autoreconnect_if_all_subordinates_fail(self):
+        class Subordinate(object):
             calls = 0
 
             def __init__(self, fail):
                 self._fail = fail
 
             def _send_message_with_response(self, *args, **kwargs):
-                Slave.calls += 1
+                Subordinate.calls += 1
                 if self._fail:
                     raise AutoReconnect()
                 return 'sent'
 
         class NotRandomList(object):
             def __init__(self):
-                self._items = [Slave(True), Slave(True),
-                               Slave(True), Slave(True)]
+                self._items = [Subordinate(True), Subordinate(True),
+                               Subordinate(True), Subordinate(True)]
 
             def __len__(self):
                 return len(self._items)
@@ -172,11 +172,11 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
             def __getitem__(self, idx):
                 return self._items.pop(0)
 
-        self.client._MasterSlaveConnection__slaves = NotRandomList()
+        self.client._MainSubordinateConnection__subordinates = NotRandomList()
 
         self.assertRaises(AutoReconnect,
             self.client._send_message_with_response, 'message')
-        self.assertEqual(4, Slave.calls)
+        self.assertEqual(4, Subordinate.calls)
 
     def test_get_db(self):
 
@@ -249,13 +249,13 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
 
         def assertRequest(in_request):
             self.assertEqual(in_request, client.in_request())
-            self.assertEqual(in_request, client.master.in_request())
+            self.assertEqual(in_request, client.main.in_request())
 
-        # MasterSlaveConnection is special, alas - it has no auto_start_request
+        # MainSubordinateConnection is special, alas - it has no auto_start_request
         # and it begins *not* in a request. When it's in a request, it sends
         # all queries to primary.
         self.assertFalse(client.in_request())
-        self.assertFalse(client.master.in_request())
+        self.assertFalse(client.main.in_request())
 
         # Start and end request
         client.start_request()
@@ -274,9 +274,9 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
     def test_request_threads(self):
         client = self.client
 
-        # In a request, all ops go through master
-        pool = client.master._MongoClient__pool
-        client.master.end_request()
+        # In a request, all ops go through main
+        pool = client.main._MongoClient__pool
+        client.main.end_request()
         self.assertNotInRequestAndDifferentSock(client, pool)
 
         started_request, ended_request = threading.Event(), threading.Event()
@@ -312,7 +312,7 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
         self.assertNotInRequestAndDifferentSock(client, pool)
         self.assertTrue(thread_done[0], "Thread didn't complete")
 
-    # This was failing because commands were being sent to the slaves
+    # This was failing because commands were being sent to the subordinates
     def test_create_collection(self):
         self.client.pymongo_test.test.drop()
 
@@ -332,7 +332,7 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
 
     # NOTE this test is non-deterministic, but I expect
     # some failures unless the db is pulling instantaneously...
-    def test_insert_find_one_with_slaves(self):
+    def test_insert_find_one_with_subordinates(self):
         count = 0
         for i in range(100):
             self.db.test.remove({})
@@ -345,7 +345,7 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
         self.assertTrue(count)
 
     # NOTE this test is non-deterministic, but hopefully we pause long enough
-    # for the slaves to pull...
+    # for the subordinates to pull...
     def test_insert_find_one_with_pause(self):
         count = 0
 
@@ -362,14 +362,14 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
 
     def test_kill_cursor_explicit(self):
         c = self.client
-        c.slave_okay = True
+        c.subordinate_okay = True
         db = c.pymongo_test
 
-        test = db.master_slave_test_kill_cursor_explicit
+        test = db.main_subordinate_test_kill_cursor_explicit
         test.drop()
 
         for i in range(20):
-            test.insert({"i": i}, w=1 + len(self.slaves))
+            test.insert({"i": i}, w=1 + len(self.subordinates))
 
         st = time.time()
         while time.time() - st < 120:
@@ -388,7 +388,7 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
         self.assertNotEqual(
             cursor._Cursor__connection_id,
             -1,
-            "Expected cursor connected to a slave, not master")
+            "Expected cursor connected to a subordinate, not main")
 
         self.assertTrue(cursor.next())
         self.assertNotEqual(0, cursor.cursor_id)
@@ -412,45 +412,45 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
 
     def test_base_object(self):
         c = self.client
-        self.assertFalse(c.slave_okay)
+        self.assertFalse(c.subordinate_okay)
         self.assertTrue(bool(c.read_preference))
         self.assertTrue(c.safe)
         self.assertEqual({}, c.get_lasterror_options())
         db = c.pymongo_test
-        self.assertFalse(db.slave_okay)
+        self.assertFalse(db.subordinate_okay)
         self.assertTrue(bool(c.read_preference))
         self.assertTrue(db.safe)
         self.assertEqual({}, db.get_lasterror_options())
         coll = db.test
         coll.drop()
-        self.assertFalse(coll.slave_okay)
+        self.assertFalse(coll.subordinate_okay)
         self.assertTrue(bool(c.read_preference))
         self.assertTrue(coll.safe)
         self.assertEqual({}, coll.get_lasterror_options())
         cursor = coll.find()
-        self.assertFalse(cursor._Cursor__slave_okay)
+        self.assertFalse(cursor._Cursor__subordinate_okay)
         self.assertTrue(bool(cursor._Cursor__read_preference))
 
-        w = 1 + len(self.slaves)
+        w = 1 + len(self.subordinates)
         wtimeout=10000 # Wait 10 seconds for replication to complete
         c.set_lasterror_options(w=w, wtimeout=wtimeout)
-        self.assertFalse(c.slave_okay)
+        self.assertFalse(c.subordinate_okay)
         self.assertTrue(bool(c.read_preference))
         self.assertTrue(c.safe)
         self.assertEqual({'w': w, 'wtimeout': wtimeout}, c.get_lasterror_options())
         db = c.pymongo_test
-        self.assertFalse(db.slave_okay)
+        self.assertFalse(db.subordinate_okay)
         self.assertTrue(bool(c.read_preference))
         self.assertTrue(db.safe)
         self.assertEqual({'w': w, 'wtimeout': wtimeout}, db.get_lasterror_options())
         coll = db.test
-        self.assertFalse(coll.slave_okay)
+        self.assertFalse(coll.subordinate_okay)
         self.assertTrue(bool(c.read_preference))
         self.assertTrue(coll.safe)
         self.assertEqual({'w': w, 'wtimeout': wtimeout},
                          coll.get_lasterror_options())
         cursor = coll.find()
-        self.assertFalse(cursor._Cursor__slave_okay)
+        self.assertFalse(cursor._Cursor__subordinate_okay)
         self.assertTrue(bool(cursor._Cursor__read_preference))
 
         coll.insert({'foo': 'bar'})
@@ -461,15 +461,15 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
 
         c.safe = False
         c.unset_lasterror_options()
-        self.assertFalse(self.client.slave_okay)
+        self.assertFalse(self.client.subordinate_okay)
         self.assertTrue(bool(self.client.read_preference))
         self.assertFalse(self.client.safe)
         self.assertEqual({}, self.client.get_lasterror_options())
 
     def test_document_class(self):
-        c = MasterSlaveConnection(self.master, self.slaves)
+        c = MainSubordinateConnection(self.main, self.subordinates)
         db = c.pymongo_test
-        w = 1 + len(self.slaves)
+        w = 1 + len(self.subordinates)
         db.test.insert({"x": 1}, w=w)
 
         self.assertEqual(dict, c.document_class)
@@ -482,7 +482,7 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
         self.assertTrue(isinstance(db.test.find_one(), SON))
         self.assertFalse(isinstance(db.test.find_one(as_class=dict), SON))
 
-        c = MasterSlaveConnection(self.master, self.slaves, document_class=SON)
+        c = MainSubordinateConnection(self.main, self.subordinates, document_class=SON)
         db = c.pymongo_test
 
         self.assertEqual(SON, c.document_class)
@@ -497,20 +497,20 @@ class TestMasterSlaveConnection(unittest.TestCase, TestRequestMixin):
 
     def test_tz_aware(self):
         dt = datetime.datetime.utcnow()
-        client = MasterSlaveConnection(self.master, self.slaves)
+        client = MainSubordinateConnection(self.main, self.subordinates)
         self.assertEqual(False, client.tz_aware)
         db = client.pymongo_test
-        w = 1 + len(self.slaves)
+        w = 1 + len(self.subordinates)
         db.tztest.insert({'dt': dt}, w=w)
         self.assertEqual(None, db.tztest.find_one()['dt'].tzinfo)
 
-        client = MasterSlaveConnection(self.master, self.slaves, tz_aware=True)
+        client = MainSubordinateConnection(self.main, self.subordinates, tz_aware=True)
         self.assertEqual(True, client.tz_aware)
         db = client.pymongo_test
         db.tztest.insert({'dt': dt}, w=w)
         self.assertEqual(utc, db.tztest.find_one()['dt'].tzinfo)
 
-        client = MasterSlaveConnection(self.master, self.slaves, tz_aware=False)
+        client = MainSubordinateConnection(self.main, self.subordinates, tz_aware=False)
         self.assertEqual(False, client.tz_aware)
         db = client.pymongo_test
         db.tztest.insert({'dt': dt}, w=w)

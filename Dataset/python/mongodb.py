@@ -29,7 +29,7 @@ class MuninMongoDBPlugin(MuninPlugin):
     def connection(self):
         if not hasattr(self, '_connection'):
             import pymongo
-            self._connection = pymongo.Connection(self.server[0], self.server[1], slave_okay=True)
+            self._connection = pymongo.Connection(self.server[0], self.server[1], subordinate_okay=True)
         return self._connection
 
     @property

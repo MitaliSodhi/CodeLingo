@@ -66,16 +66,16 @@ class TestCommon(unittest.TestCase):
 
         # Connection tests
         c = Connection(pair)
-        self.assertFalse(c.slave_okay)
+        self.assertFalse(c.subordinate_okay)
         self.assertFalse(c.safe)
         self.assertEqual({}, c.get_lasterror_options())
         db = c.pymongo_test
         db.drop_collection("test")
-        self.assertFalse(db.slave_okay)
+        self.assertFalse(db.subordinate_okay)
         self.assertFalse(db.safe)
         self.assertEqual({}, db.get_lasterror_options())
         coll = db.test
-        self.assertFalse(coll.slave_okay)
+        self.assertFalse(coll.subordinate_okay)
         self.assertFalse(coll.safe)
         self.assertEqual({}, coll.get_lasterror_options())
 
@@ -92,22 +92,22 @@ class TestCommon(unittest.TestCase):
 
         coll = db.test
         cursor = coll.find()
-        self.assertFalse(cursor._Cursor__slave_okay)
-        cursor = coll.find(slave_okay=True)
-        self.assertTrue(cursor._Cursor__slave_okay)
+        self.assertFalse(cursor._Cursor__subordinate_okay)
+        cursor = coll.find(subordinate_okay=True)
+        self.assertTrue(cursor._Cursor__subordinate_okay)
 
         # MongoClient test
         c = MongoClient(pair)
-        self.assertFalse(c.slave_okay)
+        self.assertFalse(c.subordinate_okay)
         self.assertTrue(c.safe)
         self.assertEqual({}, c.get_lasterror_options())
         db = c.pymongo_test
         db.drop_collection("test")
-        self.assertFalse(db.slave_okay)
+        self.assertFalse(db.subordinate_okay)
         self.assertTrue(db.safe)
         self.assertEqual({}, db.get_lasterror_options())
         coll = db.test
-        self.assertFalse(coll.slave_okay)
+        self.assertFalse(coll.subordinate_okay)
         self.assertTrue(coll.safe)
         self.assertEqual({}, coll.get_lasterror_options())
 
@@ -124,31 +124,31 @@ class TestCommon(unittest.TestCase):
 
         coll = db.test
         cursor = coll.find()
-        self.assertFalse(cursor._Cursor__slave_okay)
-        cursor = coll.find(slave_okay=True)
-        self.assertTrue(cursor._Cursor__slave_okay)
+        self.assertFalse(cursor._Cursor__subordinate_okay)
+        cursor = coll.find(subordinate_okay=True)
+        self.assertTrue(cursor._Cursor__subordinate_okay)
 
         # Setting any safe operations overrides explicit safe
         self.assertTrue(MongoClient(host, port, wtimeout=1000, safe=False).safe)
 
-        c = MongoClient(pair, slaveok=True, w='majority',
+        c = MongoClient(pair, subordinateok=True, w='majority',
                         wtimeout=300, fsync=True, j=True)
-        self.assertTrue(c.slave_okay)
+        self.assertTrue(c.subordinate_okay)
         self.assertTrue(c.safe)
         d = {'w': 'majority', 'wtimeout': 300, 'fsync': True, 'j': True}
         self.assertEqual(d, c.get_lasterror_options())
         db = c.pymongo_test
-        self.assertTrue(db.slave_okay)
+        self.assertTrue(db.subordinate_okay)
         self.assertTrue(db.safe)
         self.assertEqual(d, db.get_lasterror_options())
         coll = db.test
-        self.assertTrue(coll.slave_okay)
+        self.assertTrue(coll.subordinate_okay)
         self.assertTrue(coll.safe)
         self.assertEqual(d, coll.get_lasterror_options())
         cursor = coll.find()
-        self.assertTrue(cursor._Cursor__slave_okay)
-        cursor = coll.find(slave_okay=False)
-        self.assertFalse(cursor._Cursor__slave_okay)
+        self.assertTrue(cursor._Cursor__subordinate_okay)
+        cursor = coll.find(subordinate_okay=False)
+        self.assertFalse(cursor._Cursor__subordinate_okay)
 
         c = MongoClient('mongodb://%s/?'
                        'w=2;wtimeoutMS=300;fsync=true;'
@@ -158,51 +158,51 @@ class TestCommon(unittest.TestCase):
         self.assertEqual(d, c.get_lasterror_options())
 
         c = MongoClient('mongodb://%s/?'
-                       'slaveok=true;w=1;wtimeout=300;'
+                       'subordinateok=true;w=1;wtimeout=300;'
                        'fsync=true;j=true' % (pair,))
-        self.assertTrue(c.slave_okay)
+        self.assertTrue(c.subordinate_okay)
         self.assertTrue(c.safe)
         d = {'w': 1, 'wtimeout': 300, 'fsync': True, 'j': True}
         self.assertEqual(d, c.get_lasterror_options())
         self.assertEqual(d, c.write_concern)
         db = c.pymongo_test
-        self.assertTrue(db.slave_okay)
+        self.assertTrue(db.subordinate_okay)
         self.assertTrue(db.safe)
         self.assertEqual(d, db.get_lasterror_options())
         self.assertEqual(d, db.write_concern)
         coll = db.test
-        self.assertTrue(coll.slave_okay)
+        self.assertTrue(coll.subordinate_okay)
         self.assertTrue(coll.safe)
         self.assertEqual(d, coll.get_lasterror_options())
         self.assertEqual(d, coll.write_concern)
         cursor = coll.find()
-        self.assertTrue(cursor._Cursor__slave_okay)
-        cursor = coll.find(slave_okay=False)
-        self.assertFalse(cursor._Cursor__slave_okay)
+        self.assertTrue(cursor._Cursor__subordinate_okay)
+        cursor = coll.find(subordinate_okay=False)
+        self.assertFalse(cursor._Cursor__subordinate_okay)
 
         c.unset_lasterror_options()
-        self.assertTrue(c.slave_okay)
+        self.assertTrue(c.subordinate_okay)
         self.assertTrue(c.safe)
         c.safe = False
         self.assertFalse(c.safe)
-        c.slave_okay = False
-        self.assertFalse(c.slave_okay)
+        c.subordinate_okay = False
+        self.assertFalse(c.subordinate_okay)
         self.assertEqual({}, c.get_lasterror_options())
         self.assertEqual({}, c.write_concern)
         db = c.pymongo_test
-        self.assertFalse(db.slave_okay)
+        self.assertFalse(db.subordinate_okay)
         self.assertFalse(db.safe)
         self.assertEqual({}, db.get_lasterror_options())
         self.assertEqual({}, db.write_concern)
         coll = db.test
-        self.assertFalse(coll.slave_okay)
+        self.assertFalse(coll.subordinate_okay)
         self.assertFalse(coll.safe)
         self.assertEqual({}, coll.get_lasterror_options())
         self.assertEqual({}, coll.write_concern)
         cursor = coll.find()
-        self.assertFalse(cursor._Cursor__slave_okay)
-        cursor = coll.find(slave_okay=True)
-        self.assertTrue(cursor._Cursor__slave_okay)
+        self.assertFalse(cursor._Cursor__subordinate_okay)
+        cursor = coll.find(subordinate_okay=True)
+        self.assertTrue(cursor._Cursor__subordinate_okay)
 
         coll.set_lasterror_options(fsync=True)
         self.assertEqual({'fsync': True}, coll.get_lasterror_options())
@@ -222,23 +222,23 @@ class TestCommon(unittest.TestCase):
         self.assertEqual({}, c.get_lasterror_options())
         self.assertEqual({}, c.write_concern)
         self.assertFalse(c.safe)
-        db.slave_okay = True
-        self.assertTrue(db.slave_okay)
-        self.assertFalse(c.slave_okay)
-        self.assertFalse(coll.slave_okay)
+        db.subordinate_okay = True
+        self.assertTrue(db.subordinate_okay)
+        self.assertFalse(c.subordinate_okay)
+        self.assertFalse(coll.subordinate_okay)
         cursor = coll.find()
-        self.assertFalse(cursor._Cursor__slave_okay)
+        self.assertFalse(cursor._Cursor__subordinate_okay)
         cursor = db.coll2.find()
-        self.assertTrue(cursor._Cursor__slave_okay)
-        cursor = db.coll2.find(slave_okay=False)
-        self.assertFalse(cursor._Cursor__slave_okay)
+        self.assertTrue(cursor._Cursor__subordinate_okay)
+        cursor = db.coll2.find(subordinate_okay=False)
+        self.assertFalse(cursor._Cursor__subordinate_okay)
 
         self.assertRaises(ConfigurationError, coll.set_lasterror_options, foo=20)
-        self.assertRaises(TypeError, coll._BaseObject__set_slave_okay, 20)
+        self.assertRaises(TypeError, coll._BaseObject__set_subordinate_okay, 20)
         self.assertRaises(TypeError, coll._BaseObject__set_safe, 20)
 
         coll.remove()
-        self.assertEqual(None, coll.find_one(slave_okay=True))
+        self.assertEqual(None, coll.find_one(subordinate_okay=True))
         coll.unset_lasterror_options()
         coll.set_lasterror_options(w=4, wtimeout=10)
         # Fails if we don't have 4 active nodes or we don't have replication...
@@ -470,9 +470,9 @@ class TestCommon(unittest.TestCase):
 
     def test_mongo_replica_set_client(self):
         c = MongoClient(pair)
-        ismaster = c.admin.command('ismaster')
-        if 'setName' in ismaster:
-            setname = str(ismaster.get('setName'))
+        ismain = c.admin.command('ismain')
+        if 'setName' in ismain:
+            setname = str(ismain.get('setName'))
         else:
             raise SkipTest("Not connected to a replica set.")
         m = MongoReplicaSetClient(pair, replicaSet=setname, w=0)
